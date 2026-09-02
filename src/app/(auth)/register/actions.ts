@@ -36,14 +36,11 @@ export async function register(formData: FormData) {
     redirect("/register?error=" + error.message);
   }
 
-  // If email confirmation is disabled, Supabase returns a session immediately
+  // If email confirmation is disabled, Supabase returns a session immediately, 
+  // but we want to force them to the login page.
   if (data.session) {
-    if (role === "organization") {
-      redirect("/org/dashboard");
-    } else {
-      redirect("/onboarding");
-    }
+    await supabase.auth.signOut();
   }
 
-  redirect("/verify-email");
+  redirect("/login?message=Registration successful. Please log in.");
 }
