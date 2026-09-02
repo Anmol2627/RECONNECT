@@ -172,9 +172,9 @@ export function NextStepCard() {
             </DialogDescription>
           </DialogHeader>
           <div className="mt-2 flex flex-wrap gap-3">
-            <button type="button" className={primaryCta} onClick={() => setOpen(false)}>
+            <Link href="/activity/practice-introduction" className={primaryCta} onClick={() => setOpen(false)}>
               Begin activity
-            </button>
+            </Link>
             <DialogClose className="inline-flex items-center rounded-xl px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
               Maybe later
             </DialogClose>
