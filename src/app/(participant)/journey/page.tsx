@@ -6,8 +6,9 @@ import {
   NextStepCard,
   SupportBanner,
   UpcomingSupportCard,
+  AdvisorCard,
 } from "@/components/shared/cards";
-import { greetingFor } from "@/data/mock";
+import { Greeting } from "@/components/shared/Greeting";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function JourneyScreen() {
@@ -17,11 +18,12 @@ export default async function JourneyScreen() {
   let firstName = "";
   let latestCheckIn: any = null;
   let upcomingSession: any = null;
+  let advisorInfo: any = null;
 
   if (userData?.user) {
     const { data: profileData } = await supabase
       .from("profiles")
-      .select("first_name")
+      .select("first_name, advisor_id")
       .eq("id", userData.user.id)
       .single();
     
@@ -57,17 +59,24 @@ export default async function JourneyScreen() {
         status: "Upcoming",
       };
     }
+    
+    if (profileData?.advisor_id) {
+      const { data: advData } = await supabase
+        .from("profiles")
+        .select("full_name, meet_link, meet_time")
+        .eq("id", profileData.advisor_id)
+        .single();
+      if (advData) {
+        advisorInfo = advData;
+      }
+    }
   }
-
-  const greeting = greetingFor();
 
   return (
     <AppShell>
       <div className="rc-enter flex flex-col gap-6">
         <header>
-          <h1 className="font-display text-[2.5rem] leading-tight text-forest-deep">
-            {greeting}, {firstName}! <span aria-hidden="true">👋</span>
-          </h1>
+          <Greeting firstName={firstName} />
           <p className="mt-2 text-[15px] text-muted-foreground">
             Let's continue your journey toward a stronger tomorrow.
           </p>
@@ -75,6 +84,9 @@ export default async function JourneyScreen() {
 
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.9fr_1fr]">
           <div className="flex flex-col gap-6">
+            {advisorInfo && (
+              <AdvisorCard advisorInfo={advisorInfo} />
+            )}
             <JourneyFocusCard 
               focusTitle={latestCheckIn ? latestCheckIn.goal : undefined}
               focusDescription={latestCheckIn ? `You are currently focusing on overcoming: ${latestCheckIn.barrier}` : undefined}

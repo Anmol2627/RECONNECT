@@ -44,11 +44,11 @@ export function RegisterForm() {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="firstName">First Name</Label>
-            <Input id="firstName" name="firstName" placeholder="Jane" required />
+            <Input id="firstName" name="firstName" placeholder="First name" required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="lastName">Last Name</Label>
-            <Input id="lastName" name="lastName" placeholder="Doe" required />
+            <Input id="lastName" name="lastName" placeholder="Last name" required />
           </div>
         </div>
       ) : (

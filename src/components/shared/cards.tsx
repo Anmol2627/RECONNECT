@@ -315,3 +315,47 @@ export function SupportBanner() {
     </SurfaceCard>
   );
 }
+
+/* ---------- advisor card ---------- */
+
+export function AdvisorCard({ 
+  advisorInfo 
+}: { 
+  advisorInfo: { full_name: string; meet_link: string; meet_time: string; } 
+}) {
+  return (
+    <SurfaceCard className="bg-cream">
+      <EyebrowLabel>Your Assigned Advisor</EyebrowLabel>
+      <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-forest text-2xl font-bold text-cream">
+          {advisorInfo.full_name.charAt(0).toUpperCase()}
+        </div>
+        <div className="flex-1">
+          <h3 className="font-display text-xl text-forest">{advisorInfo.full_name}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Available for daily check-ins
+          </p>
+          {advisorInfo.meet_time && (
+            <p className="text-sm font-semibold text-terracotta mt-2">
+              Daily Session: {advisorInfo.meet_time}
+            </p>
+          )}
+        </div>
+      </div>
+      {advisorInfo.meet_link ? (
+        <a 
+          href={advisorInfo.meet_link}
+          target="_blank"
+          rel="noreferrer"
+          className={cn(primaryCta, "mt-6 w-full")}
+        >
+          Join Daily Google Meet
+        </a>
+      ) : (
+        <p className="text-sm text-muted-foreground italic mt-6">
+          Your advisor hasn't set up a Google Meet link yet.
+        </p>
+      )}
+    </SurfaceCard>
+  );
+}

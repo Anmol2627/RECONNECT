@@ -20,6 +20,7 @@ export interface SupportSession {
   focus: string;
   whoCanJoin: string;
   whatToExpect: string;
+  meetLink?: string;
   date: string;
   time: string;
   participantsJoined: number;

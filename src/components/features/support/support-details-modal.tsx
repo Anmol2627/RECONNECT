@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { BadgeCheck, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { loadStripe } from "@stripe/stripe-js";
 import {
   Dialog,
   DialogContent,
@@ -36,9 +37,42 @@ export function SupportDetailsModal({
   const router = useRouter();
   const [isJoining, setIsJoining] = useState(false);
 
+  const isPaid = opportunity?.price && opportunity.price !== "Free" && opportunity.price !== "0" && opportunity.price !== "";
+  // Assuming price is formatted like "$50", we need just the number
+  const priceString = opportunity?.price?.replace(/[^0-9]/g, '');
+  const priceValue = parseInt(priceString || "0", 10);
+
   const handleJoin = async () => {
     if (!opportunity || !onJoin) return;
     setIsJoining(true);
+    
+    if (isPaid && priceValue > 0) {
+      try {
+        const res = await fetch("/api/create-checkout-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: opportunity.title,
+            price: priceValue,
+            sessionId: opportunity.id,
+            returnUrl: window.location.pathname
+          })
+        });
+        const { url, error } = await res.json();
+        if (error) throw new Error(error);
+        
+        if (url) {
+          window.location.href = url;
+          return;
+        }
+      } catch (e: any) {
+        console.error("Stripe error", e);
+        alert("Payment gateway failed to load: " + e.message);
+        setIsJoining(false);
+        return;
+      }
+    }
+
     await onJoin(opportunity.id);
     setIsJoining(false);
   };
@@ -90,9 +124,21 @@ export function SupportDetailsModal({
                 Close
               </Button>
               {joined ? (
-                <div className="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-sage bg-sage/10 text-sm font-medium text-forest sm:w-auto sm:px-6">
-                  <Check className="size-4" />
-                  Joined
+                <div className="flex flex-col gap-3 w-full sm:w-auto">
+                  <div className="flex h-10 items-center justify-center gap-2 rounded-xl border border-sage bg-sage/10 text-sm font-medium text-forest px-6">
+                    <Check className="size-4" />
+                    Joined
+                  </div>
+                  {opportunity.meetLink && (
+                    <a
+                      href={opportunity.meetLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-10 items-center justify-center gap-2 rounded-xl bg-terracotta text-sm font-medium text-cream px-6 hover:bg-terracotta-hover transition-colors"
+                    >
+                      Open Google Meet
+                    </a>
+                  )}
                 </div>
               ) : (
                 <Button
@@ -100,7 +146,7 @@ export function SupportDetailsModal({
                   onClick={handleJoin}
                   disabled={isJoining}
                 >
-                  {isJoining ? "Joining..." : "Join Session"}
+                  {isJoining ? "Processing..." : isPaid ? `Pay ${opportunity.price} to Join` : "Request to Join"}
                 </Button>
               )}
             </DialogFooter>

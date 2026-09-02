@@ -26,8 +26,8 @@ type NavItem = { label: string; to: string; icon: LucideIcon; badge?: string };
 
 const primaryNav: NavItem[] = [
   { label: "My Journey", to: "/journey", icon: Home },
-  { label: "My Companion", to: "/companion", icon: Sparkles, badge: "AI" },
   { label: "Check-In", to: "/check-in", icon: HeartHandshake },
+  { label: "My Companion", to: "/companion", icon: Sparkles, badge: "AI" },
   { label: "Recommendations", to: "/recommendations", icon: Sparkles },
   { label: "Support Hub", to: "/support", icon: Users },
   { label: "Sessions & Groups", to: "/sessions", icon: CalendarDays },

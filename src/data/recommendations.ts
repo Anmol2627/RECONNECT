@@ -28,6 +28,7 @@ export interface SupportOpportunity {
     whatToExpect: string;
     duration: string;
     facilitator: string;
+    meetLink?: string;
   };
 }
 

@@ -12,12 +12,32 @@ export async function login(formData: FormData) {
     password: formData.get("password") as string,
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { data: authData, error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
     redirect("/login?error=" + error.message);
   }
 
+  const user = authData.user;
+  const role = user?.user_metadata?.role;
+
+  if (role === "organization") {
+    revalidatePath("/", "layout");
+    redirect("/org/dashboard");
+  }
+
+  // Check if participant has completed onboarding (they will have at least 1 check-in)
+  const { data: checkIns } = await supabase
+    .from("check_ins")
+    .select("id")
+    .eq("user_id", user.id)
+    .limit(1);
+
   revalidatePath("/", "layout");
-  redirect("/journey");
+
+  if (!checkIns || checkIns.length === 0) {
+    redirect("/onboarding");
+  } else {
+    redirect("/journey");
+  }
 }

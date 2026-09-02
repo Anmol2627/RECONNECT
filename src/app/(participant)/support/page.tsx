@@ -23,6 +23,7 @@ export default async function SupportHubPage() {
         date: row.date,
         time: row.time,
         availability: `${row.spots} spots left`,
+        meetLink: row.meeting_link,
         price: meta.priceType === "Paid" ? `$${meta.price}` : "Free",
         priceType: meta.priceType || "Free",
         tone: meta.tone || "mist",

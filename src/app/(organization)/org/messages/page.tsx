@@ -13,8 +13,7 @@ export default async function OrgMessagesPage() {
   const currentUserId = userData.user.id;
   const currentUserMeta = userData.user.user_metadata;
 
-  // If the current user is an org, they should see participants who have messaged them.
-  // For simplicity MVP, let's just fetch all participants.
+  // Fetch all participants (restored to show chat history for MVP)
   const { data: participants } = await supabase
     .from("profiles")
     .select("id, full_name, role")

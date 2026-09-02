@@ -30,6 +30,7 @@ import {
 import { GroupIllustration } from "../shared/GroupIllustration";
 import type { SupportSession } from "@/data/sessions";
 import { useAppContext } from "@/context/AppContext";
+import { loadStripe } from "@stripe/stripe-js";
 
 const primaryBtn =
   "inline-flex items-center justify-center gap-2 rounded-xl bg-terracotta px-6 py-3.5 text-sm font-medium text-primary-foreground shadow-soft transition-colors hover:bg-terracotta-hover";
@@ -153,13 +154,62 @@ export function SessionDetails({ session }: { session: SupportSession }) {
           {/* ACTIONS */}
           <div className="mt-6 flex flex-wrap items-center gap-4">
             {isJoined ? (
-              <span className="inline-flex items-center gap-2 rounded-xl border border-sage bg-secondary px-6 py-3.5 text-sm font-medium text-forest">
-                <BadgeCheck className="h-4 w-4" aria-hidden="true" />
-                Request sent — awaiting confirmation
-              </span>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <span className="inline-flex items-center gap-2 rounded-xl border border-sage bg-secondary px-6 py-3.5 text-sm font-medium text-forest">
+                  <BadgeCheck className="h-4 w-4" aria-hidden="true" />
+                  Request sent — awaiting confirmation
+                </span>
+                {session.meetLink && (
+                  <a
+                    href={session.meetLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={primaryBtn}
+                  >
+                    Open Google Meet
+                  </a>
+                )}
+              </div>
             ) : (
-              <button type="button" className={primaryBtn} onClick={() => setJoinOpen(true)}>
-                Request to Join
+              <button 
+                type="button" 
+                className={primaryBtn} 
+                onClick={async () => {
+                  const isPaid = session.price && session.price !== "Free" && session.price !== "0" && session.price !== "";
+                  const priceValue = parseInt(session.price?.replace(/[^0-9]/g, '') || "0", 10);
+                  
+                  if (isPaid && priceValue > 0) {
+                    try {
+                      const res = await fetch("/api/create-checkout-session", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          title: session.title,
+                          price: priceValue,
+                          sessionId: session.id,
+                          returnUrl: window.location.pathname
+                        })
+                      });
+                      const { url, error } = await res.json();
+                      if (error) throw new Error(error);
+                      
+                      if (url) {
+                        window.location.href = url;
+                        return;
+                      }
+                    } catch (e: any) {
+                      console.error("Stripe error", e);
+                      alert("Payment gateway failed to load: " + e.message);
+                      return;
+                    }
+                  }
+                  
+                  setJoinOpen(true);
+                }}
+              >
+                {session.price && session.price !== "Free" && session.price !== "0" && session.price !== "" 
+                  ? `Pay ${session.price} to Join` 
+                  : "Request to Join"}
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
             )}

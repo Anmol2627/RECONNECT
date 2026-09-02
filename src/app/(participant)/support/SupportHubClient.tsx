@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { ArrowRight, SearchX } from "lucide-react";
 import { SupportCategoryCard } from "@/components/features/support/support-category-card";
 import { SupportOpportunityCard } from "@/components/features/support/support-opportunity-card";
@@ -24,6 +24,22 @@ export function SupportHubClient({ opportunities }: { opportunities: SupportOppo
   const [selected, setSelected] = useState<SupportOpportunity | null>(null);
   
   const { state: { joinedSessions }, joinSession } = useAppContext();
+
+  // If redirected back from payment, auto-open the session modal
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      const sessionParam = searchParams.get("session");
+      const openParam = searchParams.get("open");
+      
+      if (openParam === "true" && sessionParam) {
+        const found = opportunities.find(o => o.id === sessionParam);
+        if (found) {
+          setSelected(found);
+        }
+      }
+    }
+  }, [opportunities]);
 
   const results = useMemo(
     () => filterOpportunities(opportunities, { area, query }),

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { loadStripe } from "@stripe/stripe-js";
 import {
   Dialog,
   DialogContent,
@@ -35,9 +36,40 @@ export function SupportDetailsModal({
       ]
     : [];
 
+  const isPaid = option?.metadata?.priceType === "Paid";
+  const price = option?.metadata?.price;
+
   const handleJoin = async () => {
     if (!option || !onJoin) return;
     setIsJoining(true);
+
+    if (isPaid && price) {
+      try {
+        const res = await fetch("/api/create-checkout-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: option.title,
+            price: price,
+            sessionId: option.id,
+            returnUrl: window.location.pathname
+          })
+        });
+        const { url, error } = await res.json();
+        if (error) throw new Error(error);
+        
+        if (url) {
+          window.location.href = url;
+          return;
+        }
+      } catch (e: any) {
+        console.error("Stripe error", e);
+        alert("Payment gateway failed to load: " + e.message);
+        setIsJoining(false);
+        return;
+      }
+    }
+
     await onJoin(option.id);
     setIsJoining(false);
   };
@@ -49,6 +81,7 @@ export function SupportDetailsModal({
           <DialogTitle className="font-serif text-2xl text-forest">About this session</DialogTitle>
           <DialogDescription className="text-sm text-muted-foreground">
             {option ? `${option.title} · ${option.type}` : ""}
+            {isPaid && price ? ` · ₹${price}` : ""}
           </DialogDescription>
         </DialogHeader>
 
@@ -65,9 +98,21 @@ export function SupportDetailsModal({
         
         <DialogFooter className="mt-4 sm:justify-end">
           {joined ? (
-             <div className="flex h-10 w-full items-center justify-center gap-2 rounded-full border border-sage bg-sage/10 text-sm font-medium text-forest sm:w-auto sm:px-6">
-               <Check className="size-4" />
-               Joined
+             <div className="flex flex-col gap-3 w-full sm:w-auto">
+               <div className="flex h-10 items-center justify-center gap-2 rounded-full border border-sage bg-sage/10 text-sm font-medium text-forest px-6">
+                 <Check className="size-4" />
+                 Joined
+               </div>
+               {option?.details?.meetLink && (
+                 <a
+                   href={option.details.meetLink}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className="flex h-10 items-center justify-center gap-2 rounded-full bg-terracotta text-sm font-medium text-cream px-6 hover:bg-terracotta-hover transition-colors"
+                 >
+                   Open Google Meet
+                 </a>
+               )}
              </div>
           ) : (
             <Button
@@ -75,7 +120,7 @@ export function SupportDetailsModal({
               onClick={handleJoin}
               disabled={isJoining}
             >
-              {isJoining ? "Joining..." : "Join Session"}
+              {isJoining ? "Processing..." : isPaid ? `Pay ₹${price} to Join` : "Join Session"}
             </Button>
           )}
         </DialogFooter>

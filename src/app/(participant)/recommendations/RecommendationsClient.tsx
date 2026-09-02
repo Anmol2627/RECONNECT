@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 import { AlternativeSupportCard } from "@/components/features/recommendations/AlternativeSupportCard";
 import { BestMatchCard } from "@/components/features/recommendations/BestMatchCard";
@@ -20,6 +20,26 @@ export function RecommendationsClient({ steps, best, alternatives }: Recommendat
   const [joinOpen, setJoinOpen] = useState(false);
   const [detailsFor, setDetailsFor] = useState<SupportOpportunity | null>(null);
   const alternativesRef = useRef<HTMLDivElement>(null);
+
+  // Auto-open modal if returning from payment
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const searchParams = new URLSearchParams(window.location.search);
+      const sessionParam = searchParams.get("session");
+      const openParam = searchParams.get("open");
+      
+      if (openParam === "true" && sessionParam) {
+        if (best.id === sessionParam) {
+          setDetailsFor(best);
+        } else {
+          const found = alternatives.find((o) => o.id === sessionParam);
+          if (found) {
+            setDetailsFor(found);
+          }
+        }
+      }
+    }
+  }, [best, alternatives]);
 
   const confirmJoin = async () => {
     try {

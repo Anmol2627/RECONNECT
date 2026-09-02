@@ -29,6 +29,7 @@ export type SupportOpportunity = {
   deliveryMode: "In person" | "Online" | "Self-guided";
   facilitator?: string;
   suggested?: boolean;
+  meetLink?: string;
 };
 
 export type SupportArea = {

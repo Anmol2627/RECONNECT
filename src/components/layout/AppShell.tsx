@@ -4,6 +4,8 @@ import { X, LayoutDashboard, Heart, Sparkles, Users2, Calendar, BookOpen, Messag
 
 import { ParticipantSidebar } from "./ParticipantSidebar";
 import { TopBar } from "./TopBar";
+import { Suspense } from "react";
+import { PaymentSuccessHandler } from "./PaymentSuccessHandler";
 
 type AppShellProps = {
   children: ReactNode;
@@ -22,6 +24,9 @@ export function AppShell({
 
   return (
     <div className="flex min-h-dvh w-full bg-background">
+      <Suspense fallback={null}>
+        <PaymentSuccessHandler />
+      </Suspense>
       <aside className="sticky top-0 hidden h-dvh lg:block">
         <ParticipantSidebar />
       </aside>

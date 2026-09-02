@@ -15,16 +15,31 @@ export default async function MessagesPage() {
   const currentUserId = userData.user.id;
   const currentUserMeta = userData.user.user_metadata;
 
+  // Fetch the current participant's profile to get their assigned advisor
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("advisor_id")
+    .eq("id", currentUserId)
+    .single();
+
+  let assignedAdvisor: any = null;
+  if (profile?.advisor_id) {
+    const { data: adv } = await supabase
+      .from("profiles")
+      .select("id, full_name, role")
+      .eq("id", profile.advisor_id)
+      .single();
+    if (adv) assignedAdvisor = adv;
+  }
+
   // We want to fetch users they can chat with. 
-  // For the MVP demo, we will just fetch all Organizations.
-  // In a real app, this would be based on connections or past messages.
+  // We'll fetch all Organizations so they don't lose chat history.
   const { data: orgs } = await supabase
     .from("profiles")
     .select("id, full_name, role")
     .eq("role", "organization");
 
   // If the current user is an org, they should see participants who have messaged them.
-  // For simplicity, let's just fetch all participants.
   const { data: participants } = await supabase
     .from("profiles")
     .select("id, full_name, role")

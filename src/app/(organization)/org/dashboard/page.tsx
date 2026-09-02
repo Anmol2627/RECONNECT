@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { CreateSessionModal } from "@/components/features/org/CreateSessionModal";
+import { AdvisorSettingsCard } from "@/components/features/org/AdvisorSettingsCard";
 import { Users, Calendar, Laptop, Download, Bell, ChevronDown, ArrowRight, TrendingUp, Leaf, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -32,6 +33,19 @@ export default async function OrgDashboardPage() {
     acc[rsvp.session_id].push(rsvp.profiles);
     return acc;
   }, {});
+
+  // Fetch the org's profile for the meet_link / meet_time
+  const { data: orgProfile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userData.user.id)
+    .single();
+
+  // Fetch participants assigned to this org
+  const { data: assignedParticipants } = await supabase
+    .from("profiles")
+    .select("id, full_name, first_name, email")
+    .eq("advisor_id", userData.user.id);
 
   const orgName = userData.user.user_metadata.full_name || "Organization";
   const firstName = orgName.split(" ")[0] || "there";
@@ -205,6 +219,36 @@ export default async function OrgDashboardPage() {
               <CreateSessionModal />
             </div>
           </section>
+
+          {/* Assigned Participants */}
+          <section className="rounded-2xl border border-[#EFEFEF] bg-[#FDFDFC] p-6 shadow-sm">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="font-display text-lg text-[#183626]">My Assigned Participants</h2>
+              <span className="rounded bg-[#F4F7F4] px-2 py-1 text-[10px] font-bold text-[#284835]">{assignedParticipants?.length || 0} Total</span>
+            </div>
+            <div className="space-y-4">
+              {assignedParticipants && assignedParticipants.length > 0 ? (
+                assignedParticipants.map((p) => (
+                  <div key={p.id} className="flex items-center gap-3 border-b border-[#EFEFEF] pb-3 last:border-0 last:pb-0">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E5F0E5] text-sm font-bold text-[#284835]">
+                      {(p.first_name?.[0] || p.full_name?.[0] || "P").toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-[#183626]">{p.full_name || p.first_name || "Anonymous Participant"}</div>
+                      <div className="text-[10px] text-[#8E9E8E]">{p.email}</div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-2 text-center text-xs text-[#8E9E8E]">No participants assigned yet.</div>
+              )}
+            </div>
+          </section>
+
+          <AdvisorSettingsCard 
+            initialLink={orgProfile?.meet_link || ""} 
+            initialTime={orgProfile?.meet_time || ""} 
+          />
 
           {/* Recommendations Insights */}
           <section className="rounded-2xl border border-[#EFEFEF] bg-white p-6 shadow-sm">

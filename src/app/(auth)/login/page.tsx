@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { LogIn } from "lucide-react";
+import { AuthSplitLayout } from "@/components/layout/AuthSplitLayout";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,37 +10,25 @@ export const metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-sand p-4">
-      <div className="w-full max-w-md rounded-2xl bg-cream p-8 shadow-sm">
-        <div className="mb-8 text-center">
-          <h1 className="font-display text-3xl text-forest-deep">Welcome Back</h1>
-          <p className="mt-2 text-muted-foreground">Sign in to continue your RECONNECT journey.</p>
+    <AuthSplitLayout currentTab="login">
+      <form className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email address</Label>
+          <Input id="email" name="email" type="email" placeholder="you@example.com" required />
         </div>
         
-        <form className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" placeholder="you@example.com" required />
-          </div>
-          
-          <div className="space-y-2">
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" required />
+            <a href="#" className="text-xs text-muted-foreground hover:text-forest-deep">Forgot password?</a>
           </div>
-          
-          <SubmitButton pendingText="Signing In..." className="w-full rounded-full bg-forest text-cream hover:bg-forest-deep" formAction={login}>
-            <LogIn className="mr-2 h-4 w-4" />
-            Sign In
-          </SubmitButton>
-        </form>
-        
-        <div className="mt-6 text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
-          <Link href="/register" className="font-medium text-sage-deep hover:underline">
-            Register here
-          </Link>
+          <Input id="password" name="password" type="password" required />
         </div>
-      </div>
-    </div>
+        
+        <SubmitButton pendingText="Logging in..." className="w-full rounded-xl bg-forest/80 text-cream hover:bg-forest-deep py-6" formAction={login}>
+          Log in &rarr;
+        </SubmitButton>
+      </form>
+    </AuthSplitLayout>
   );
 }
