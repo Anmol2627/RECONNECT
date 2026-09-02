@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2024-06-20" as any, // use latest compatible
-});
-
 export async function POST(req: Request) {
   try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+      apiVersion: "2024-06-20" as any, // use latest compatible
+    });
+
     const { title, price, sessionId, returnUrl } = await req.json();
 
     const baseUrl = req.headers.get("origin");
