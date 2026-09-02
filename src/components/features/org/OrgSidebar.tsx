@@ -113,6 +113,11 @@ export function OrgSidebar() {
           </div>
           <ChevronDown className="h-4 w-4 text-[#AABBAA]" />
         </button>
+        <form action="/auth/signout" method="POST" className="mt-2 px-2">
+          <button type="submit" className="w-full text-left text-xs text-[#AABBAA] hover:text-red-400 font-medium py-1.5 rounded-md hover:bg-[#1E3E2B] transition-colors">
+            Log out
+          </button>
+        </form>
       </div>
     </aside>
   );

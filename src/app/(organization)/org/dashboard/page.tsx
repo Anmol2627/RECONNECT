@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { CreateSessionModal } from "@/components/features/org/CreateSessionModal";
 import { AdvisorSettingsCard } from "@/components/features/org/AdvisorSettingsCard";
-import { Users, Calendar, Laptop, Download, Bell, ChevronDown, ArrowRight, TrendingUp, Leaf, BookOpen } from "lucide-react";
+import { Users, Calendar, Laptop, Download, Bell, ChevronDown, ArrowRight, TrendingUp, Leaf, BookOpen, LogOut } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { EngagementChart, GoalsChart, ParticipantProgressStepper } from "@/components/features/org/OrgDashboardCharts";
@@ -75,6 +75,11 @@ export default async function OrgDashboardPage() {
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F4F7F4] text-sm font-bold text-[#183626]">
             {firstName.substring(0, 2).toUpperCase()}
           </div>
+          <form action="/auth/signout" method="POST" className="md:hidden">
+            <button type="submit" aria-label="Log out" className="flex h-10 w-10 items-center justify-center rounded-full bg-red-50 text-red-600 hover:bg-red-100 transition-colors">
+              <LogOut className="h-5 w-5" />
+            </button>
+          </form>
         </div>
       </header>
 
