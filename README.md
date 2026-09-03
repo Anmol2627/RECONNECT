@@ -6,7 +6,7 @@
 Built for our hackathon submission, this platform combats the isolation of recovery by combining personalized journey tracking, real-world community support, and 24/7 AI-driven empathy into a single, beautifully designed ecosystem.
 
 ## 🛑 The Problem
-Reintegrating into society after life-altering events (like incarceration, addiction, or severe trauma) is incredibly difficult. People face fragmented support systems, lack of continuous guidance, and overwhelming feelings of isolation. Meanwhile, organizations lack unified tools to track participant progress, communicate effectively, and manage resources, leading to high drop-out rates and repeated cycles of failure.
+Reintegrating into society after life-altering events (like incarceration, addiction, social disconnect or severe trauma) is incredibly difficult. People face fragmented support systems, lack of continuous guidance, and overwhelming feelings of isolation. Meanwhile, organizations lack unified tools to track participant progress, communicate effectively, and manage resources, leading to high drop-out rates and repeated cycles of failure.
 
 ## 💡 Our Solution
 RECONNECT solves this by providing a unified platform with a dual-role architecture:
