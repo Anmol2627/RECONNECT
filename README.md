@@ -1,6 +1,6 @@
 # 🚀 RECONNECT
 
-**🔗 Live Deployment:** [https://reconnect01.vercel.app](https://reconnect01.vercel.app)
+🔗 Live Deployment:[https://reconnect01.vercel.app](https://reconnect01.vercel.app)
 **RECONNECT** is an AI-powered rehabilitation and reintegration platform designed to bridge the critical gap between individuals seeking to rebuild their lives (Participants) and the groups providing help (Organizations). 
 
 Built for our hackathon submission, this platform combats the isolation of recovery by combining personalized journey tracking, real-world community support, and 24/7 AI-driven empathy into a single, beautifully designed ecosystem.
